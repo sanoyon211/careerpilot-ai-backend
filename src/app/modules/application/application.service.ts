@@ -66,6 +66,16 @@ const updateApplicationStatusInDB = async (applicationId: string, status: string
   application.status = status as any;
   await application.save();
 
+  try {
+    const io = require('../../../socket').getIO();
+    io.to(application.applicantId.toString()).emit('status_updated', {
+      jobTitle: job.title,
+      status: status
+    });
+  } catch (error) {
+    console.error('Socket error:', error);
+  }
+
   return application;
 };
 

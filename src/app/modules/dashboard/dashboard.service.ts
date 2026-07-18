@@ -35,6 +35,24 @@ const getEmployerStats = async (userEmail: string) => {
     postedJobs: postedJobsCount,
     totalApplicants: totalApplicantsCount,
     profileViews: Math.floor(Math.random() * 50) + 10, // Simulated
+    chartData: {
+      viewsData: [
+        { name: 'Mon', views: 120, applications: 40 },
+        { name: 'Tue', views: 200, applications: 80 },
+        { name: 'Wed', views: 150, applications: 50 },
+        { name: 'Thu', views: 300, applications: 120 },
+        { name: 'Fri', views: 250, applications: 90 },
+        { name: 'Sat', views: 100, applications: 30 },
+        { name: 'Sun', views: 180, applications: 60 },
+      ],
+      statusData: [
+        { name: 'Applied', value: 120, fill: '#6b7280' },
+        { name: 'In Review', value: 80, fill: '#3b82f6' },
+        { name: 'Interview', value: 40, fill: '#8b5cf6' },
+        { name: 'Hired', value: 15, fill: '#22c55e' },
+        { name: 'Rejected', value: 25, fill: '#ef4444' },
+      ]
+    }
   };
 };
 

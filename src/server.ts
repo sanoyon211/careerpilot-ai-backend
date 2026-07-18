@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import app from './app';
 import config from './app/config';
+import { initSocket } from './socket';
 
 let server: any;
 
@@ -12,6 +13,8 @@ async function main() {
     server = app.listen(config.port, () => {
       console.log(`🚀 Application is running on port ${config.port}`);
     });
+
+    initSocket(server);
   } catch (err) {
     console.error('Failed to connect to MongoDB', err);
   }
