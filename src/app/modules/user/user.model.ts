@@ -42,13 +42,12 @@ const userSchema = new Schema<TUser>(
   },
 );
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
   if (user.isModified('password') && user.password) {
     user.password = await bcrypt.hash(user.password, 12);
   }
-  next();
 });
 
 export const User = model<TUser>('User', userSchema);

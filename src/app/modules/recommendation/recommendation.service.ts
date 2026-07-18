@@ -38,6 +38,11 @@ const getRecommendations = async (userEmail: string) => {
 
   try {
     const aiResponse = await generateAIResponse(prompt, 'You are an AI Matchmaker. Return only valid JSON.');
+    
+    if (!aiResponse) {
+      throw new Error("Failed to get a valid response from AI");
+    }
+
     const cleanedText = aiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
     const recommendations = JSON.parse(cleanedText);
     return recommendations;

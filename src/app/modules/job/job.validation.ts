@@ -2,11 +2,11 @@ import { z } from 'zod';
 
 const createJobValidationSchema = z.object({
   body: z.object({
-    title: z.string({ required_error: 'Title is required' }),
-    category: z.string({ required_error: 'Category is required' }),
-    shortDescription: z.string({ required_error: 'Short description is required' }),
-    fullDescription: z.string({ required_error: 'Full description is required' }),
-    location: z.string({ required_error: 'Location is required' }),
+    title: z.string({ message: 'Title is required' }),
+    category: z.string({ message: 'Category is required' }),
+    shortDescription: z.string({ message: 'Short description is required' }),
+    fullDescription: z.string({ message: 'Full description is required' }),
+    location: z.string({ message: 'Location is required' }),
     workMode: z.enum(['Remote', 'Hybrid', 'On-site']),
     jobType: z.enum(['Full-time', 'Part-time', 'Contract', 'Internship']),
     salaryRange: z.string().optional(),
