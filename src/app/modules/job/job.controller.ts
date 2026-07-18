@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { JobServices } from './job.service';
 
 const createJob = catchAsync(async (req, res) => {
-  const employerEmail = req.user.email;
+  const employerEmail = req.user.email as string;
   const result = await JobServices.createJobIntoDB(req.body, employerEmail);
 
   sendResponse(res, {
@@ -27,7 +27,7 @@ const getAllJobs = catchAsync(async (req, res) => {
 });
 
 const getEmployerJobs = catchAsync(async (req, res) => {
-  const employerEmail = req.user.email;
+  const employerEmail = req.user.email as string;
   const result = await JobServices.getEmployerJobsFromDB(employerEmail);
 
   sendResponse(res, {
@@ -39,7 +39,7 @@ const getEmployerJobs = catchAsync(async (req, res) => {
 });
 
 const getJobById = catchAsync(async (req, res) => {
-  const result = await JobServices.getJobByIdFromDB(req.params.id);
+  const result = await JobServices.getJobByIdFromDB(req.params.id as string);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

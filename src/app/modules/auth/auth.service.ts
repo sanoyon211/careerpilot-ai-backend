@@ -18,7 +18,7 @@ const loginUser = async (payload: TLoginUser) => {
   }
 
   // check if password matches
-  const isPasswordMatched = await bcrypt.compare(payload.password, user.password);
+  const isPasswordMatched = await bcrypt.compare(payload.password as string, user.password as string);
   if (!isPasswordMatched) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Invalid credentials');
   }

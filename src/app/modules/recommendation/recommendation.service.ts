@@ -43,8 +43,9 @@ const getRecommendations = async (userEmail: string) => {
       throw new Error("Failed to get a valid response from AI");
     }
 
-    const cleanedText = aiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-    const recommendations = JSON.parse(cleanedText);
+    const match = aiResponse.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (!match) throw new Error("No JSON found in AI response");
+    const recommendations = JSON.parse(match[0]);
     return recommendations;
   } catch (error) {
     console.error("Recommendation Error:", error);

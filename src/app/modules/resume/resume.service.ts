@@ -29,8 +29,9 @@ const processAndSaveResume = async (fileUrl: string, userEmail: string) => {
     }
 
     // Clean response (sometimes AI wraps in ```json ... ```)
-    const cleanedText = aiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-    parsedData = JSON.parse(cleanedText);
+    const match = aiResponse.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+    if (!match) throw new Error("No JSON found in AI response");
+    parsedData = JSON.parse(match[0]);
   } catch (error) {
     console.error("AI Parsing Error:", error);
     // Proceed with empty defaults if AI fails so the user isn't blocked completely

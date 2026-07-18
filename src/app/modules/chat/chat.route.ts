@@ -8,7 +8,7 @@ const router = express.Router();
 
 const chatValidationSchema = z.object({
   body: z.object({
-    message: z.string({ required_error: 'Message is required' }),
+    message: z.string({ message: 'Message is required' }),
   })
 });
 

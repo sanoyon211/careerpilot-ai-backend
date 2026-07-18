@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const createApplicationValidationSchema = z.object({
   body: z.object({
-    jobId: z.string({ required_error: 'Job ID is required' }),
-    resumeUrl: z.string({ required_error: 'Resume URL is required' }),
+    jobId: z.string({ message: 'Job ID is required' }),
+    resumeUrl: z.string({ message: 'Resume URL is required' }),
     coverLetter: z.string().optional(),
   }),
 });

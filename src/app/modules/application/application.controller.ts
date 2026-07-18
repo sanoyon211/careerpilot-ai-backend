@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { ApplicationServices } from './application.service';
 
 const createApplication = catchAsync(async (req, res) => {
-  const applicantEmail = req.user.email;
+  const applicantEmail = req.user.email as string;
   const result = await ApplicationServices.createApplicationIntoDB(req.body, applicantEmail);
 
   sendResponse(res, {
@@ -16,7 +16,7 @@ const createApplication = catchAsync(async (req, res) => {
 });
 
 const getMyApplications = catchAsync(async (req, res) => {
-  const applicantEmail = req.user.email;
+  const applicantEmail = req.user.email as string;
   const result = await ApplicationServices.getMyApplicationsFromDB(applicantEmail);
 
   sendResponse(res, {
@@ -28,8 +28,8 @@ const getMyApplications = catchAsync(async (req, res) => {
 });
 
 const getJobApplications = catchAsync(async (req, res) => {
-  const employerEmail = req.user.email;
-  const result = await ApplicationServices.getJobApplicationsFromDB(req.params.jobId, employerEmail);
+  const employerEmail = req.user.email as string;
+  const result = await ApplicationServices.getJobApplicationsFromDB(req.params.jobId as string, employerEmail);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -40,9 +40,9 @@ const getJobApplications = catchAsync(async (req, res) => {
 });
 
 const updateApplicationStatus = catchAsync(async (req, res) => {
-  const employerEmail = req.user.email;
+  const employerEmail = req.user.email as string;
   const { status } = req.body;
-  const result = await ApplicationServices.updateApplicationStatusInDB(req.params.id, status, employerEmail);
+  const result = await ApplicationServices.updateApplicationStatusInDB(req.params.id as string, status, employerEmail);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
