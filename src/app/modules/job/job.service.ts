@@ -13,10 +13,47 @@ const createJobIntoDB = async (payload: TJob, employerEmail: string) => {
   return result;
 };
 
+import { generateAIResponse } from '../ai/gemini';
+import { AGENTIC_SEARCH_PROMPT } from '../ai/prompts';
+
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   const filter: any = { isDeleted: false, status: 'Active' };
   
-  if (query.searchTerm) {
+  if (query.agenticSearch === 'true' && query.searchTerm) {
+    try {
+      const aiResponse = await generateAIResponse(
+        `Search Query: "${query.searchTerm}"\n\n${AGENTIC_SEARCH_PROMPT}`
+      );
+      const match = aiResponse.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+      if (match) {
+        const parsed = JSON.parse(match[0]);
+        const orConditions = [];
+        
+        if (parsed.titles && parsed.titles.length > 0) {
+          orConditions.push({ title: { $in: parsed.titles.map((t: string) => new RegExp(t, 'i')) } });
+        }
+        if (parsed.skills && parsed.skills.length > 0) {
+          orConditions.push({ fullDescription: { $in: parsed.skills.map((s: string) => new RegExp(s, 'i')) } });
+        }
+        
+        if (orConditions.length > 0) {
+          filter.$or = orConditions;
+        }
+        
+        if (parsed.workMode) {
+          filter.workMode = parsed.workMode;
+        }
+      }
+    } catch (error) {
+      console.error("Agentic Search Error:", error);
+      // Fallback to normal search if AI fails
+      filter.$or = [
+        { title: { $regex: query.searchTerm, $options: 'i' } },
+        { category: { $regex: query.searchTerm, $options: 'i' } },
+        { location: { $regex: query.searchTerm, $options: 'i' } },
+      ];
+    }
+  } else if (query.searchTerm) {
     filter.$or = [
       { title: { $regex: query.searchTerm, $options: 'i' } },
       { category: { $regex: query.searchTerm, $options: 'i' } },

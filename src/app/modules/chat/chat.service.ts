@@ -1,11 +1,11 @@
 import { generateAIChatResponse } from '../ai/gemini';
-import { CAREER_COACH_SYSTEM_PROMPT } from '../ai/prompts';
+import { CAREER_COACH_SYSTEM_PROMPT, MOCK_INTERVIEW_SYSTEM_PROMPT } from '../ai/prompts';
 import { Resume } from '../resume/resume.model';
 import { User } from '../user/user.model';
 
 type ChatMessage = { role: 'user' | 'ai'; content: string };
 
-const processChatMessage = async (history: ChatMessage[], userEmail: string) => {
+const processChatMessage = async (history: ChatMessage[], userEmail: string, mode?: 'coach' | 'mock-interview') => {
   // Inject context if user has a resume
   const user = await User.findOne({ email: userEmail });
   let context = '';
@@ -19,7 +19,8 @@ const processChatMessage = async (history: ChatMessage[], userEmail: string) => 
     }
   }
 
-  const systemInstruction = CAREER_COACH_SYSTEM_PROMPT + context;
+  const basePrompt = mode === 'mock-interview' ? MOCK_INTERVIEW_SYSTEM_PROMPT : CAREER_COACH_SYSTEM_PROMPT;
+  const systemInstruction = basePrompt + context;
 
   const geminiHistory = history.map(msg => ({
     role: (msg.role === 'ai' ? 'model' : 'user') as 'model' | 'user',
