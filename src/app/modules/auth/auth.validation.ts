@@ -7,6 +7,15 @@ const loginValidationSchema = z.object({
   }),
 });
 
+const socialLoginValidationSchema = z.object({
+  body: z.object({
+    email: z.string({ message: 'Email is required' }).email(),
+    name: z.string({ message: 'Name is required' }),
+    photoURL: z.string().optional(),
+  }),
+});
+
 export const AuthValidations = {
   loginValidationSchema,
+  socialLoginValidationSchema,
 };

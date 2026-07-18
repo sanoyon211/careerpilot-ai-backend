@@ -25,6 +25,26 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+const socialLoginUser = catchAsync(async (req, res) => {
+  const result = await AuthServices.socialLoginUser(req.body);
+  const { refreshToken, accessToken, user } = result;
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.env === 'production',
+    httpOnly: true,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User logged in successfully via Social Login',
+    data: {
+      accessToken,
+      user,
+    },
+  });
+});
+
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken) {
@@ -43,4 +63,5 @@ const refreshToken = catchAsync(async (req, res) => {
 export const AuthControllers = {
   loginUser,
   refreshToken,
+  socialLoginUser,
 };

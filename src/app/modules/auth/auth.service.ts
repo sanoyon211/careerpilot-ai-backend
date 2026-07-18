@@ -6,6 +6,7 @@ import { TLoginUser } from './auth.interface';
 import bcrypt from 'bcrypt';
 import { createToken } from '../../utils/generateToken';
 import config from '../../config';
+import { v4 as uuidv4 } from 'uuid';
 
 const loginUser = async (payload: TLoginUser) => {
   // check if user exists
@@ -89,7 +90,53 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const socialLoginUser = async (payload: { email: string; name: string; photoURL?: string }) => {
+  let user = await User.findOne({ email: payload.email });
+
+  if (!user) {
+    const randomPassword = uuidv4(); // Generate a random password for social login users
+    user = await User.create({
+      email: payload.email,
+      name: payload.name,
+      password: randomPassword,
+      role: 'job-seeker', // Default role
+      avatar: payload.photoURL || '',
+    });
+  }
+
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted!');
+  }
+
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt.access_secret as string,
+    config.jwt.access_expires_in as string,
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt.refresh_secret as string,
+    config.jwt.refresh_expires_in as string,
+  );
+
+  const userObj = user.toObject();
+  delete userObj.password;
+
+  return {
+    accessToken,
+    refreshToken,
+    user: userObj,
+  };
+};
+
 export const AuthServices = {
   loginUser,
   refreshToken,
+  socialLoginUser,
 };
