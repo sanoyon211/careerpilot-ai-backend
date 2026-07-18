@@ -34,7 +34,7 @@ const processAndSaveResume = async (fileUrl: string, userEmail: string) => {
     parsedData = JSON.parse(match[0]);
   } catch (error) {
     console.error("AI Parsing Error:", error);
-    // Proceed with empty defaults if AI fails so the user isn't blocked completely
+    throw new AppError(httpStatus.SERVICE_UNAVAILABLE, 'Failed to parse resume using AI. Please try again later.');
   }
 
   // 3. Save to DB (Upsert)
