@@ -9,6 +9,7 @@ import { ChatRoutes } from '../modules/chat/chat.route';
 import { RecommendationRoutes } from '../modules/recommendation/recommendation.route';
 import { SavedJobRoutes } from '../modules/savedJob/savedJob.route';
 import { DashboardRoutes } from '../modules/dashboard/dashboard.route';
+import { AIRoutes } from '../modules/ai/ai.route';
 
 const router = Router();
 
@@ -23,6 +24,7 @@ const moduleRoutes = [
   { path: '/recommendations', route: RecommendationRoutes },
   { path: '/saved-jobs', route: SavedJobRoutes },
   { path: '/dashboard', route: DashboardRoutes },
+  { path: '/ai', route: AIRoutes },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

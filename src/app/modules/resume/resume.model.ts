@@ -9,6 +9,8 @@ const resumeSchema = new Schema<TResume>(
       technicalSkills: [{ type: String }],
       softSkills: [{ type: String }],
       experienceSummary: { type: String },
+      atsScore: { type: Number },
+      atsFeedback: [{ type: String }],
     },
     isDeleted: { type: Boolean, default: false },
   },

@@ -7,6 +7,8 @@ export type TResume = {
     technicalSkills: string[];
     softSkills: string[];
     experienceSummary: string;
+    atsScore?: number;
+    atsFeedback?: string[];
   };
   isDeleted: boolean;
 };
