@@ -10,6 +10,7 @@ const createJobValidationSchema = z.object({
     workMode: z.enum(['Remote', 'Hybrid', 'On-site']),
     jobType: z.enum(['Full-time', 'Part-time', 'Contract', 'Internship']),
     salaryRange: z.string().optional(),
+    imageUrl: z.string().optional(),
     status: z.enum(['Active', 'Draft', 'Closed']).optional(),
   }),
 });
@@ -24,6 +25,7 @@ const updateJobValidationSchema = z.object({
     workMode: z.enum(['Remote', 'Hybrid', 'On-site']).optional(),
     jobType: z.enum(['Full-time', 'Part-time', 'Contract', 'Internship']).optional(),
     salaryRange: z.string().optional(),
+    imageUrl: z.string().optional(),
     status: z.enum(['Active', 'Draft', 'Closed']).optional(),
   }),
 });

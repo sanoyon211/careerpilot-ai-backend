@@ -49,9 +49,22 @@ const getJobById = catchAsync(async (req, res) => {
   });
 });
 
+const deleteJob = catchAsync(async (req, res) => {
+  const employerEmail = req.user.email as string;
+  const result = await JobServices.deleteJobFromDB(req.params.id as string, employerEmail);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Job deleted successfully',
+    data: result,
+  });
+});
+
 export const JobControllers = {
   createJob,
   getAllJobs,
   getEmployerJobs,
   getJobById,
+  deleteJob,
 };

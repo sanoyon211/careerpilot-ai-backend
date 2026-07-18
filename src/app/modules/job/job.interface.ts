@@ -9,6 +9,7 @@ export type TJob = {
   workMode: 'Remote' | 'Hybrid' | 'On-site';
   jobType: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
   salaryRange?: string;
+  imageUrl?: string;
   employerId: Types.ObjectId;
   status: 'Active' | 'Draft' | 'Closed';
   applicantsCount: number;

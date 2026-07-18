@@ -50,9 +50,25 @@ const getJobByIdFromDB = async (id: string) => {
   return result;
 };
 
+const deleteJobFromDB = async (id: string, employerEmail: string) => {
+  const employer = await User.findOne({ email: employerEmail });
+  if (!employer) throw new AppError(httpStatus.NOT_FOUND, 'Employer not found');
+
+  const job = await Job.findById(id);
+  if (!job || job.isDeleted) throw new AppError(httpStatus.NOT_FOUND, 'Job not found');
+
+  if (job.employerId.toString() !== employer._id.toString()) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are not authorized to delete this job');
+  }
+
+  const result = await Job.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  return result;
+};
+
 export const JobServices = {
   createJobIntoDB,
   getAllJobsFromDB,
   getEmployerJobsFromDB,
   getJobByIdFromDB,
+  deleteJobFromDB,
 };

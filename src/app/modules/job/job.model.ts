@@ -11,6 +11,7 @@ const jobSchema = new Schema<TJob>(
     workMode: { type: String, enum: ['Remote', 'Hybrid', 'On-site'], required: true },
     jobType: { type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Internship'], required: true },
     salaryRange: { type: String },
+    imageUrl: { type: String },
     employerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status: { type: String, enum: ['Active', 'Draft', 'Closed'], default: 'Active' },
     applicantsCount: { type: Number, default: 0 },

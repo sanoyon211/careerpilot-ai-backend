@@ -23,4 +23,10 @@ router.get(
 
 router.get('/:id', JobControllers.getJobById);
 
+router.delete(
+  '/:id',
+  auth('employer', 'admin'),
+  JobControllers.deleteJob,
+);
+
 export const JobRoutes = router;
