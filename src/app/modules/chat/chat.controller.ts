@@ -5,8 +5,8 @@ import { ChatServices } from './chat.service';
 
 const sendMessage = catchAsync(async (req, res) => {
   const userEmail = req.user.email;
-  const { message } = req.body;
-  const result = await ChatServices.processChatMessage(message, userEmail);
+  const { history } = req.body;
+  const result = await ChatServices.processChatMessage(history, userEmail);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

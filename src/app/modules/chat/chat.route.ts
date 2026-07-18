@@ -8,7 +8,10 @@ const router = express.Router();
 
 const chatValidationSchema = z.object({
   body: z.object({
-    message: z.string({ message: 'Message is required' }),
+    history: z.array(z.object({
+      role: z.enum(['user', 'ai']),
+      content: z.string()
+    })),
   })
 });
 

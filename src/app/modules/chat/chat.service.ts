@@ -1,9 +1,11 @@
-import { generateAIResponse } from '../ai/gemini';
+import { generateAIChatResponse } from '../ai/gemini';
 import { CAREER_COACH_SYSTEM_PROMPT } from '../ai/prompts';
 import { Resume } from '../resume/resume.model';
 import { User } from '../user/user.model';
 
-const processChatMessage = async (message: string, userEmail: string) => {
+type ChatMessage = { role: 'user' | 'ai'; content: string };
+
+const processChatMessage = async (history: ChatMessage[], userEmail: string) => {
   // Inject context if user has a resume
   const user = await User.findOne({ email: userEmail });
   let context = '';
@@ -11,15 +13,20 @@ const processChatMessage = async (message: string, userEmail: string) => {
   if (user) {
     const resume = await Resume.findOne({ userId: user._id, isDeleted: false });
     if (resume) {
-      context = `User Context: They have the following technical skills: ${resume.parsedData.technicalSkills.join(', ')}. 
+      context = `\n\nUser Context: They have the following technical skills: ${resume.parsedData.technicalSkills.join(', ')}. 
       Their experience: ${resume.parsedData.experienceSummary}. 
-      Use this context to give personalized advice if relevant to their question.\n\n`;
+      Use this context to give personalized advice if relevant to their questions.`;
     }
   }
 
-  const prompt = `${context}User Question: ${message}`;
+  const systemInstruction = CAREER_COACH_SYSTEM_PROMPT + context;
+
+  const geminiHistory = history.map(msg => ({
+    role: (msg.role === 'ai' ? 'model' : 'user') as 'model' | 'user',
+    parts: [{ text: msg.content }],
+  }));
   
-  const aiReply = await generateAIResponse(prompt, CAREER_COACH_SYSTEM_PROMPT);
+  const aiReply = await generateAIChatResponse(geminiHistory, systemInstruction);
   
   return {
     reply: aiReply
