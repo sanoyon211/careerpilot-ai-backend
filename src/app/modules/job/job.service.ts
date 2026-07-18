@@ -24,6 +24,14 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
     ];
   }
   
+  if (query.jobType) {
+    filter.jobType = query.jobType;
+  }
+  
+  if (query.workMode) {
+    filter.workMode = query.workMode;
+  }
+  
   const result = await Job.find(filter).populate('employerId', 'name avatar');
   return result;
 };
