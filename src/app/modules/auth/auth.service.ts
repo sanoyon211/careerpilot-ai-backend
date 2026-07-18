@@ -1,5 +1,6 @@
 import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import bcrypt from 'bcrypt';
@@ -51,6 +52,44 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
+const refreshToken = async (token: string) => {
+  let decoded;
+  try {
+    decoded = jwt.verify(
+      token,
+      config.jwt.refresh_secret as string,
+    ) as JwtPayload;
+  } catch (err) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Unauthorized');
+  }
+
+  const { email } = decoded;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
+  }
+  if (user.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted!');
+  }
+
+  const jwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt.access_secret as string,
+    config.jwt.access_expires_in as string,
+  );
+
+  return {
+    accessToken,
+  };
+};
+
 export const AuthServices = {
   loginUser,
+  refreshToken,
 };
