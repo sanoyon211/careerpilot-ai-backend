@@ -24,6 +24,10 @@ const processAndSaveResume = async (fileUrl: string, userEmail: string) => {
   try {
     const aiResponse = await generateAIResponseWithPDF(RESUME_PARSER_PROMPT, pdfBuffer);
     
+    if (!aiResponse) {
+      throw new Error("Failed to get a valid response from AI");
+    }
+
     // Clean response (sometimes AI wraps in ```json ... ```)
     const cleanedText = aiResponse.replace(/```json/g, '').replace(/```/g, '').trim();
     parsedData = JSON.parse(cleanedText);

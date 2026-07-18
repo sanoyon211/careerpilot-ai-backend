@@ -1,14 +1,14 @@
 import { GoogleGenAI } from '@google/genai';
 import config from '../../config';
 
-const ai = new GoogleGenAI({ apiKey: config.ai.gemini_api_key });
+const ai = new GoogleGenAI({ apiKey: config.ai.gemini_api_key as string });
 
 export const generateAIResponse = async (prompt: string, systemInstruction?: string) => {
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
     contents: prompt,
     config: {
-      systemInstruction: systemInstruction,
+      ...(systemInstruction !== undefined && { systemInstruction }),
       temperature: 0.7,
     },
   });
