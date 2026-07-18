@@ -15,8 +15,11 @@ const updateUserValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
     phone: z.string().optional(),
-    location: z.string().optional(),
     avatar: z.string().optional(),
+    location: z.string().optional(),
+    headline: z.string().optional(),
+    bio: z.string().optional(),
+    portfolio: z.string().url().optional(),
   }),
 });
 

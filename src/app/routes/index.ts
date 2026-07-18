@@ -7,6 +7,8 @@ import { ApplicationRoutes } from '../modules/application/application.route';
 import { ResumeRoutes } from '../modules/resume/resume.route';
 import { ChatRoutes } from '../modules/chat/chat.route';
 import { RecommendationRoutes } from '../modules/recommendation/recommendation.route';
+import { SavedJobRoutes } from '../modules/savedJob/savedJob.route';
+import { DashboardRoutes } from '../modules/dashboard/dashboard.route';
 
 const router = Router();
 
@@ -19,6 +21,8 @@ const moduleRoutes = [
   { path: '/resume', route: ResumeRoutes },
   { path: '/chat', route: ChatRoutes },
   { path: '/recommendations', route: RecommendationRoutes },
+  { path: '/saved-jobs', route: SavedJobRoutes },
+  { path: '/dashboard', route: DashboardRoutes },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

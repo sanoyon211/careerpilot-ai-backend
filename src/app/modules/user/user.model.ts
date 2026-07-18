@@ -32,6 +32,15 @@ const userSchema = new Schema<TUser>(
     location: {
       type: String,
     },
+    headline: {
+      type: String,
+    },
+    bio: {
+      type: String,
+    },
+    portfolio: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

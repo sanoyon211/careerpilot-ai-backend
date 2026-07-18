@@ -8,5 +8,8 @@ export type TUser = {
   phone?: string;
   avatar?: string;
   location?: string;
+  headline?: string;
+  bio?: string;
+  portfolio?: string;
   isDeleted: boolean;
 };
