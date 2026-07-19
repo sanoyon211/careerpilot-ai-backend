@@ -56,7 +56,16 @@ export const seedDemoUsers = async () => {
       console.log('✅ Demo Employer seeded: employer@careerpilot.com');
     }
 
-    // 3. Seed 10 Realistic Jobs for Demo Employer if needed
+    // 3. Soft-delete any legacy jobs not belonging to Demo Employer
+    const cleanupResult = await Job.updateMany(
+      { employerId: { $ne: employerUser._id } },
+      { $set: { isDeleted: true } }
+    );
+    if (cleanupResult.modifiedCount > 0) {
+      console.log(`🧹 Cleaned up ${cleanupResult.modifiedCount} legacy non-employer jobs.`);
+    }
+
+    // 4. Seed 10 Realistic Jobs for Demo Employer if needed
     const existingJobsCount = await Job.countDocuments({ employerId: employerUser._id, isDeleted: false });
 
     if (existingJobsCount < 10) {

@@ -7,7 +7,8 @@ let io: Server;
 export const initSocket = (server: HttpServer) => {
   io = new Server(server, {
     cors: {
-      origin: config.client_url,
+      origin: [config.client_url, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+      credentials: true,
       methods: ['GET', 'POST'],
     },
   });
@@ -16,8 +17,10 @@ export const initSocket = (server: HttpServer) => {
     console.log('🔗 Client connected to socket:', socket.id);
 
     socket.on('join_user_room', (userId) => {
-      socket.join(userId);
-      console.log(`👤 User ${userId} joined their personal room`);
+      if (userId) {
+        socket.join(userId);
+        console.log(`👤 User ${userId} joined personal socket room`);
+      }
     });
 
     socket.on('disconnect', () => {

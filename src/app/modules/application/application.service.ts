@@ -4,6 +4,7 @@ import { Application } from './application.model';
 import { Job } from '../job/job.model';
 import { User } from '../user/user.model';
 import { TApplication } from './application.interface';
+import { getIO } from '../../../socket';
 
 const createApplicationIntoDB = async (payload: TApplication, applicantEmail: string) => {
   const applicant = await User.findOne({ email: applicantEmail });
@@ -67,13 +68,15 @@ const updateApplicationStatusInDB = async (applicationId: string, status: string
   await application.save();
 
   try {
-    const io = require('../../../socket').getIO();
-    io.to(application.applicantId.toString()).emit('status_updated', {
+    const io = getIO();
+    const applicantRoom = application.applicantId.toString();
+    io.to(applicantRoom).emit('status_updated', {
       jobTitle: job.title,
       status: status,
     });
+    console.log(`📡 Emitted status_updated event to room: ${applicantRoom} (${job.title} -> ${status})`);
   } catch (error) {
-    console.error('Socket error:', error);
+    console.error('Socket notification error:', error);
   }
 
   return application;
