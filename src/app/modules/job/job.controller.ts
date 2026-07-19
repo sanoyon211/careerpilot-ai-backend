@@ -49,6 +49,18 @@ const getJobById = catchAsync(async (req, res) => {
   });
 });
 
+const updateJob = catchAsync(async (req, res) => {
+  const employerEmail = req.user.email as string;
+  const result = await JobServices.updateJobInDB(req.params.id as string, req.body, employerEmail);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Job updated successfully',
+    data: result,
+  });
+});
+
 const deleteJob = catchAsync(async (req, res) => {
   const employerEmail = req.user.email as string;
   const result = await JobServices.deleteJobFromDB(req.params.id as string, employerEmail);
@@ -66,5 +78,6 @@ export const JobControllers = {
   getAllJobs,
   getEmployerJobs,
   getJobById,
+  updateJob,
   deleteJob,
 };

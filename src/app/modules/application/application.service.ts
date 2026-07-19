@@ -12,7 +12,7 @@ const createApplicationIntoDB = async (payload: TApplication, applicantEmail: st
   const job = await Job.findById(payload.jobId);
   if (!job) throw new AppError(httpStatus.NOT_FOUND, 'Job not found');
 
-  const existingApplication = await Application.findOne({ jobId: payload.jobId, applicantId: applicant._id });
+  const existingApplication = await Application.findOne({ jobId: payload.jobId, applicantId: applicant._id, isDeleted: false });
   if (existingApplication) {
     throw new AppError(httpStatus.CONFLICT, 'You have already applied for this job');
   }
@@ -33,7 +33,7 @@ const getMyApplicationsFromDB = async (applicantEmail: string) => {
   const result = await Application.find({ applicantId: applicant._id, isDeleted: false })
     .populate('jobId')
     .sort({ createdAt: -1 });
-  
+
   return result;
 };
 
@@ -70,11 +70,31 @@ const updateApplicationStatusInDB = async (applicationId: string, status: string
     const io = require('../../../socket').getIO();
     io.to(application.applicantId.toString()).emit('status_updated', {
       jobTitle: job.title,
-      status: status
+      status: status,
     });
   } catch (error) {
     console.error('Socket error:', error);
   }
+
+  return application;
+};
+
+const deleteApplicationFromDB = async (applicationId: string, employerEmail: string) => {
+  const employer = await User.findOne({ email: employerEmail });
+  if (!employer) throw new AppError(httpStatus.NOT_FOUND, 'Employer not found');
+
+  const application = await Application.findById(applicationId).populate('jobId');
+  if (!application) throw new AppError(httpStatus.NOT_FOUND, 'Application not found');
+
+  const job: any = application.jobId;
+  if (job.employerId.toString() !== employer._id.toString()) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You do not have permission to delete this application');
+  }
+
+  application.isDeleted = true;
+  await application.save();
+
+  await Job.findByIdAndUpdate(job._id, { $inc: { applicantsCount: -1 } });
 
   return application;
 };
@@ -84,4 +104,5 @@ export const ApplicationServices = {
   getMyApplicationsFromDB,
   getJobApplicationsFromDB,
   updateApplicationStatusInDB,
+  deleteApplicationFromDB,
 };

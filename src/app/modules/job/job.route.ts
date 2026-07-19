@@ -23,6 +23,12 @@ router.get(
 
 router.get('/:id', JobControllers.getJobById);
 
+router.patch(
+  '/:id',
+  auth('employer', 'admin'),
+  JobControllers.updateJob,
+);
+
 router.delete(
   '/:id',
   auth('employer', 'admin'),

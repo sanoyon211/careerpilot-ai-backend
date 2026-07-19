@@ -32,4 +32,10 @@ router.patch(
   ApplicationControllers.updateApplicationStatus,
 );
 
+router.delete(
+  '/:id',
+  auth('employer', 'admin'),
+  ApplicationControllers.deleteApplication,
+);
+
 export const ApplicationRoutes = router;

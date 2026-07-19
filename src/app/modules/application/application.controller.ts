@@ -52,9 +52,22 @@ const updateApplicationStatus = catchAsync(async (req, res) => {
   });
 });
 
+const deleteApplication = catchAsync(async (req, res) => {
+  const employerEmail = req.user.email as string;
+  const result = await ApplicationServices.deleteApplicationFromDB(req.params.id as string, employerEmail);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Application deleted successfully',
+    data: result,
+  });
+});
+
 export const ApplicationControllers = {
   createApplication,
   getMyApplications,
   getJobApplications,
   updateApplicationStatus,
+  deleteApplication,
 };
