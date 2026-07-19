@@ -1,0 +1,8 @@
+ApiError: {"error":{"code":400,"message":"The document has no pages.","status":"INVALID_ARGUMENT"}}
+    at throwErrorIfNotOK (C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\node_modules\@google\genai\dist\node\index.cjs:14151:30)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\node_modules\@google\genai\dist\node\index.cjs:13851:13
+    at Models.generateContent (C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\node_modules\@google\genai\dist\node\index.cjs:15282:24)
+    at generateAIResponseWithPDF (C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\src\app\modules\ai\gemini.ts:33:20)
+    at Object.processAndSaveResume (C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\src\app\modules\resume\resume.service.ts:32:24)
+    at C:\Users\USER\OneDrive\Desktop\SCIC_13\career-pilot-ai\careerpilot-ai-backend\src\app\modules\resume\resume.controller.ts:9:18

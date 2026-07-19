@@ -19,4 +19,10 @@ router.get(
   ResumeControllers.getMyResume,
 );
 
+router.delete(
+  '/me',
+  auth('job-seeker'),
+  ResumeControllers.deleteMyResume,
+);
+
 export const ResumeRoutes = router;

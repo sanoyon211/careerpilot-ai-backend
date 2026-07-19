@@ -6,7 +6,8 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinaryUpload,
   params: {
     folder: 'careerpilot-ai',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
+    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'doc', 'docx'],
+    resource_type: 'auto',
   } as any,
 });
 

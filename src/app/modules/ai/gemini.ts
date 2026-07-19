@@ -5,7 +5,7 @@ const ai = new GoogleGenAI({ apiKey: config.ai.gemini_api_key as string });
 
 export const generateAIResponse = async (prompt: string, systemInstruction?: string) => {
   const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-flash-latest',
     contents: prompt,
     config: {
       ...(systemInstruction !== undefined && { systemInstruction }),
@@ -18,7 +18,7 @@ export const generateAIResponse = async (prompt: string, systemInstruction?: str
 
 export const generateAIChatResponse = async (history: { role: 'user' | 'model'; parts: { text: string }[] }[], systemInstruction?: string) => {
   const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-flash-latest',
     contents: history,
     config: {
       ...(systemInstruction !== undefined && { systemInstruction }),
@@ -31,7 +31,7 @@ export const generateAIChatResponse = async (history: { role: 'user' | 'model'; 
 
 export const generateAIResponseWithPDF = async (prompt: string, pdfBuffer: Buffer, mimeType = 'application/pdf') => {
   const response = await ai.models.generateContent({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-flash-latest',
     contents: [
       {
         inlineData: {
@@ -39,8 +39,11 @@ export const generateAIResponseWithPDF = async (prompt: string, pdfBuffer: Buffe
           mimeType,
         }
       },
-      prompt
-    ]
+      { text: prompt }
+    ],
+    config: {
+      responseMimeType: 'application/json',
+    }
   });
   
   return response.text;
