@@ -24,17 +24,18 @@ const getRecommendations = async (userEmail: string) => {
 
   // Ask AI to find matches and skill gaps
   const prompt = `
-  User Skills: ${resume.parsedData.technicalSkills.join(', ')}
+  User Technical Skills: ${resume.parsedData.technicalSkills.join(', ')}
+  User Soft Skills: ${resume.parsedData.softSkills?.join(', ') || 'N/A'}
   User Experience: ${resume.parsedData.experienceSummary}
 
   Available Jobs (JSON):
-  ${JSON.stringify(jobs.map(j => ({ id: j._id, title: j.title, category: j.category, reqs: j.shortDescription })))}
+  ${JSON.stringify(jobs.map(j => ({ id: j._id, title: j.title, category: j.category, location: j.location, reqs: j.shortDescription })))}
 
   Based on the user's skills and the available jobs, please return a JSON object containing:
-  1. "recommendedJobs": Array of objects { jobId, matchPercentage (number between 0-100), reason (string) }
+  1. "recommendedJobs": Array of objects { jobId, matchPercentage (number 0-100), reason (string) }
   2. "recommendedSkills": Array of objects { name (string), importance ('High'|'Medium'|'Low'), reason (string) }
   
-  Return ONLY valid JSON.
+  Return ONLY valid JSON. No markdown ticks.
   `;
 
   try {
@@ -43,7 +44,7 @@ const getRecommendations = async (userEmail: string) => {
       // Primary: Groq with Llama 3.3 70B Versatile for high speed and accuracy
       aiResponse = await generateGroqResponse(
         prompt,
-        'You are an AI Matchmaker. Return only valid JSON.',
+        'You are an expert AI Job Matchmaker and Career Coach. Return only valid JSON.',
         'llama-3.3-70b-versatile',
         true
       );
@@ -59,7 +60,32 @@ const getRecommendations = async (userEmail: string) => {
     const match = aiResponse.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
     if (!match) throw new Error("No JSON found in AI response");
     const recommendations = JSON.parse(match[0]);
-    return recommendations;
+
+    // Populate job details for frontend rendering
+    const rawJobs = Array.isArray(recommendations.recommendedJobs) ? recommendations.recommendedJobs : [];
+    const populatedJobs = rawJobs.map((rec: any) => {
+      const foundJob = jobs.find(j => j._id.toString() === rec.jobId?.toString());
+      return {
+        jobId: rec.jobId,
+        matchPercentage: typeof rec.matchPercentage === 'number' ? rec.matchPercentage : 80,
+        reason: rec.reason || 'Strong skill alignment with job requirements.',
+        jobDetails: foundJob ? {
+          _id: foundJob._id,
+          title: foundJob.title,
+          category: foundJob.category,
+          location: foundJob.location,
+          jobType: foundJob.jobType,
+          workMode: foundJob.workMode,
+          salaryRange: foundJob.salaryRange,
+          shortDescription: foundJob.shortDescription,
+        } : null,
+      };
+    });
+
+    return {
+      recommendedJobs: populatedJobs,
+      recommendedSkills: Array.isArray(recommendations.recommendedSkills) ? recommendations.recommendedSkills : [],
+    };
   } catch (error: any) {
     console.error("Recommendation Error:", error);
     throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to generate recommendations');
