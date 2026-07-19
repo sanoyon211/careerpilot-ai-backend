@@ -1,12 +1,13 @@
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
+import config from './app/config';
 
 let io: Server;
 
 export const initSocket = (server: HttpServer) => {
   io = new Server(server, {
     cors: {
-      origin: '*',
+      origin: config.client_url,
       methods: ['GET', 'POST'],
     },
   });

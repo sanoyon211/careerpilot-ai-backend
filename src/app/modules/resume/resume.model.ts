@@ -5,6 +5,7 @@ const resumeSchema = new Schema<TResume>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
     fileUrl: { type: String, required: true },
+    fileName: { type: String },
     parsedData: {
       technicalSkills: [{ type: String }],
       softSkills: [{ type: String }],

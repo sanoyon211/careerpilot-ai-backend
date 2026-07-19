@@ -13,7 +13,7 @@ export const generateAIResponse = async (prompt: string, systemInstruction?: str
     },
   });
   
-  return response.text;
+  return response.text ?? '';
 };
 
 export const generateAIChatResponse = async (history: { role: 'user' | 'model'; parts: { text: string }[] }[], systemInstruction?: string) => {
@@ -26,7 +26,7 @@ export const generateAIChatResponse = async (history: { role: 'user' | 'model'; 
     },
   });
   
-  return response.text;
+  return response.text ?? '';
 };
 
 export const generateAIResponseWithPDF = async (prompt: string, pdfBuffer: Buffer, mimeType = 'application/pdf') => {
@@ -46,5 +46,5 @@ export const generateAIResponseWithPDF = async (prompt: string, pdfBuffer: Buffe
     }
   });
   
-  return response.text;
+  return response.text ?? '';
 };

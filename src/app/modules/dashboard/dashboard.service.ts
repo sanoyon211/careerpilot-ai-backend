@@ -9,14 +9,14 @@ const getJobSeekerStats = async (userEmail: string) => {
   const user = await User.findOne({ email: userEmail });
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
 
-  const appliedJobsCount = await Application.countDocuments({ applicant: user._id });
+  const appliedJobsCount = await Application.countDocuments({ applicantId: user._id });
   const savedJobsCount = await SavedJob.countDocuments({ user: user._id });
   
   return {
     appliedJobs: appliedJobsCount,
     savedJobs: savedJobsCount,
-    profileViews: Math.floor(Math.random() * 50) + 10, // Simulated for now
-    aiMatchScore: "85%", // Simulated for now
+    profileViews: Math.floor(Math.random() * 50) + 10, // TODO: Implement real profile views tracking
+    aiMatchScore: "85%", // TODO: Implement real AI match score calculation
   };
 };
 
@@ -24,18 +24,19 @@ const getEmployerStats = async (userEmail: string) => {
   const user = await User.findOne({ email: userEmail });
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
 
-  const postedJobsCount = await Job.countDocuments({ employer: user._id });
+  const postedJobsCount = await Job.countDocuments({ employerId: user._id, isDeleted: false });
   // Need to get all applications for jobs posted by this employer
-  const employerJobs = await Job.find({ employer: user._id }).select('_id');
+  const employerJobs = await Job.find({ employerId: user._id }).select('_id');
   const jobIds = employerJobs.map(job => job._id);
   
-  const totalApplicantsCount = await Application.countDocuments({ job: { $in: jobIds } });
+  const totalApplicantsCount = await Application.countDocuments({ jobId: { $in: jobIds } });
 
   return {
     postedJobs: postedJobsCount,
     totalApplicants: totalApplicantsCount,
-    profileViews: Math.floor(Math.random() * 50) + 10, // Simulated
+    profileViews: Math.floor(Math.random() * 50) + 10, // TODO: Implement real profile views tracking
     chartData: {
+      // TODO: Replace with real data from database aggregation
       viewsData: [
         { name: 'Mon', views: 120, applications: 40 },
         { name: 'Tue', views: 200, applications: 80 },

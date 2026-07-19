@@ -47,8 +47,7 @@ const processAndSaveResume = async (fileUrl: string, fileName: string, userEmail
     if (!match) throw new Error("No JSON found in AI response");
     parsedData = JSON.parse(match[0]);
   } catch (error: any) {
-    console.error("AI Parsing Error:", error);
-    require('fs').writeFileSync('error_log.txt', String(error.stack || error.message || error));
+    console.error("AI Parsing Error:", error?.message || error);
     throw new AppError(httpStatus.SERVICE_UNAVAILABLE, 'Failed to parse resume using AI: ' + (error.message || 'Unknown error'));
   }
 
@@ -74,7 +73,12 @@ const deleteMyResumeFromDB = async (userEmail: string) => {
   const user = await User.findOne({ email: userEmail });
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
 
-  const result = await Resume.findOneAndDelete({ userId: user._id });
+  const result = await Resume.findOneAndUpdate(
+    { userId: user._id, isDeleted: false },
+    { isDeleted: true },
+    { new: true },
+  );
+  if (!result) throw new AppError(httpStatus.NOT_FOUND, 'Resume not found');
   return result;
 };
 

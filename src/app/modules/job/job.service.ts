@@ -16,6 +16,9 @@ const createJobIntoDB = async (payload: TJob, employerEmail: string) => {
 import { generateAIResponse } from '../ai/gemini';
 import { AGENTIC_SEARCH_PROMPT } from '../ai/prompts';
 
+// Helper to escape special regex characters from user/AI input
+const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   const filter: any = { isDeleted: false, status: 'Active' };
   
@@ -30,10 +33,14 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
         const orConditions = [];
         
         if (parsed.titles && parsed.titles.length > 0) {
-          orConditions.push({ title: { $in: parsed.titles.map((t: string) => new RegExp(t, 'i')) } });
+          orConditions.push({ title: { $in: parsed.titles.map((t: string) => new RegExp(escapeRegex(t), 'i')) } });
         }
         if (parsed.skills && parsed.skills.length > 0) {
-          orConditions.push({ fullDescription: { $in: parsed.skills.map((s: string) => new RegExp(s, 'i')) } });
+          // Use $or with $regex for partial matching on string fields
+          const skillConditions = parsed.skills.map((s: string) => ({
+            fullDescription: { $regex: escapeRegex(s), $options: 'i' }
+          }));
+          orConditions.push(...skillConditions);
         }
         
         if (orConditions.length > 0) {

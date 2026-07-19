@@ -12,6 +12,7 @@ const chatValidationSchema = z.object({
       role: z.enum(['user', 'ai']),
       content: z.string()
     })),
+    mode: z.enum(['coach', 'mock-interview']).optional(),
   })
 });
 
