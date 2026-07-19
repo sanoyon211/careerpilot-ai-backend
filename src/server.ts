@@ -3,12 +3,15 @@ import app from './app';
 import config from './app/config';
 import { initSocket } from './socket';
 
+import { seedDemoUsers } from './app/utils/seedDemoUsers';
+
 let server: any;
 
 async function main() {
   try {
     await mongoose.connect(config.database_url as string);
     console.log('🛢️ Connected to MongoDB successfully!');
+    await seedDemoUsers();
 
     server = app.listen(config.port, () => {
       console.log(`🚀 Application is running on port ${config.port}`);

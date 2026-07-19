@@ -105,7 +105,7 @@ const processAndSaveResume = async (fileUrl: string, fileName: string, userEmail
   const result = await Resume.findOneAndUpdate(
     { userId: user._id },
     { fileUrl, fileName: fileName || 'Resume.pdf', parsedData, isDeleted: false },
-    { new: true, upsert: true }
+    { returnDocument: 'after', upsert: true }
   );
 
   return result;
@@ -126,7 +126,7 @@ const deleteMyResumeFromDB = async (userEmail: string) => {
   const result = await Resume.findOneAndUpdate(
     { userId: user._id, isDeleted: false },
     { isDeleted: true },
-    { new: true },
+    { returnDocument: 'after' },
   );
   if (!result) throw new AppError(httpStatus.NOT_FOUND, 'Resume not found');
   return result;
